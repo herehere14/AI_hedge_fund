@@ -100,7 +100,7 @@ export const api = {
    * @returns A function to abort the SSE connection
    */
   runHedgeFund: (
-    params: HedgeFundRequest, 
+    params: HedgeFundRequest,
     nodeContext: ReturnType<typeof useNodeContext>,
     flowId: string | null = null
   ): (() => void) => {
@@ -318,4 +318,38 @@ export const api = {
       }
     };
   },
-}; 
+
+  /**
+   * Scan for trading opportunities based on a strategy
+   */
+  async scan(data: any): Promise<any> {
+    const response = await fetch(`${API_BASE_URL}/scan`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      throw new Error('Failed to run scan');
+    }
+    return response.json();
+  },
+
+  /**
+   * Backtest a strategy
+   */
+  async backtest(data: any): Promise<any> {
+    const response = await fetch(`${API_BASE_URL}/backtest`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      throw new Error('Failed to run backtest');
+    }
+    return response.json();
+  },
+};

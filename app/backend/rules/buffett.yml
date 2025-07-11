@@ -1,0 +1,9 @@
+id: buffett
+description: Warren Buffett value strategy
+filters:
+  - field: pe_ratio
+    op: '<'
+    value: 20
+  - field: debt_to_equity
+    op: '<'
+    value: 1

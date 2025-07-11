@@ -1,0 +1,9 @@
+id: wood
+description: Cathie Wood growth strategy
+filters:
+  - field: revenue_growth
+    op: '>'
+    value: 0.2
+  - field: market_cap
+    op: '>'
+    value: 1000000000

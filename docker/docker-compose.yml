@@ -1,4 +1,22 @@
 services:
+
+  timescaledb:
+    image: timescale/timescaledb:latest-pg14
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=hedgefund
+    ports:
+      - "5432:5432"
+    volumes:
+      - timescaledb_data:/var/lib/postgresql/data
+    restart: unless-stopped
+  sentiment-api:
+    image: ghcr.io/looker/finbert-rest:latest
+    container_name: sentiment-api
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
   ollama:
     image: ollama/ollama:latest
     container_name: ollama
@@ -99,4 +117,5 @@ services:
     stdin_open: true
 
 volumes:
-  ollama_data: 
+  ollama_data:
+  timescaledb_data:

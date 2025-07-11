@@ -2,10 +2,24 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import logging
 import asyncio
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.triggers.cron import CronTrigger
+
+from app.backend.tasks.update_guru_stats import update_guru_stats
+
+import asyncio
+import logging
 
 from app.backend.routes import api_router
 from app.backend.database.connection import engine
+from app.backend.database.connection import engine, SessionLocal
+from app.backend.db import engine, init_db
+from app.backend.routes import api_router
+
 from app.backend.database.models import Base
+from app.backend.scheduler import start as start_scheduler
+from app.backend.database.init_sample_data import load_sample_data
+
 from app.backend.services.ollama_service import ollama_service
 
 # Configure logging
@@ -16,6 +30,12 @@ app = FastAPI(title="AI Hedge Fund API", description="Backend API for AI Hedge F
 
 # Initialize database tables (this is safe to run multiple times)
 Base.metadata.create_all(bind=engine)
+with SessionLocal() as db:
+    load_sample_data(db)
+
+scheduler = AsyncIOScheduler(timezone="UTC")
+scheduler.add_job(update_guru_stats, CronTrigger(hour=2, minute=0), id="update_guru_stats")
+
 
 # Configure CORS
 app.add_middleware(
@@ -53,3 +73,7 @@ async def startup_event():
     except Exception as e:
         logger.warning(f"Could not check Ollama status: {e}")
         logger.info("ℹ Ollama integration is available if you install it later")
+
+
+    if not scheduler.running:
+        scheduler.start()

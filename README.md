@@ -236,6 +236,14 @@ poetry run python src/backtester.py --ticker AAPL,MSFT,NVDA --ollama
 run.bat --ticker AAPL,MSFT,NVDA --ollama backtest
 ```
 
+#### Loading Historical Prices
+
+Use the backend CLI to load end-of-day prices into the SQLite database.
+
+```bash
+poetry run python app/backend/cli/load_data.py load-eod --ticker BRK-B --start 1965-01-04
+```
+
 ### 🖥️ Web Application
 
 The new way to run the AI Hedge Fund is through our web application that provides a user-friendly interface. **This is recommended for most users, especially those who prefer visual interfaces over command line tools.**

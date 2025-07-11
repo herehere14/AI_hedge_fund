@@ -156,3 +156,26 @@ class FlowRunSummaryResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class ThemeSearchResponse(BaseModel):
+    tickers: List[str]
+
+# Alert-related schemas
+class ScanRequest(BaseModel):
+    """Request payload for the scan endpoint"""
+
+    tickers: List[str]
+
+
+class AlertResponse(BaseModel):
+    """Alert response"""
+
+    id: int
+    ticker: str
+    message: str
+    created_at: datetime
+    emailed: bool
+
+    class Config:
+        from_attributes = True

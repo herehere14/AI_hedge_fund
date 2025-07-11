@@ -2,6 +2,8 @@ import datetime
 import os
 import pandas as pd
 import requests
+from app.backend.services.sentiment import analyze_headline_sentiment
+
 import time
 
 from src.data.cache import get_cache
@@ -273,6 +275,14 @@ def get_company_news(
 
     if not all_news:
         return []
+
+    # Enrich with sentiment using FinBERT service if missing
+    for news in all_news:
+        if news.sentiment is None and news.title:
+            sentiment = analyze_headline_sentiment(news.title)
+            if sentiment:
+                news.sentiment = sentiment
+
 
     # Cache the results using the comprehensive cache key
     _cache.set_company_news(cache_key, [news.model_dump() for news in all_news])
