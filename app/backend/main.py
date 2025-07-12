@@ -1,20 +1,16 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import logging
-import asyncio
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 
 from app.backend.tasks.update_guru_stats import update_guru_stats
 
-import asyncio
-import logging
 
 from app.backend.routes import api_router
 from app.backend.database.connection import engine
 from app.backend.database.connection import engine, SessionLocal
-from app.backend.db import engine, init_db
-from app.backend.routes import api_router
+
 
 from app.backend.database.models import Base
 from app.backend.scheduler import start as start_scheduler
