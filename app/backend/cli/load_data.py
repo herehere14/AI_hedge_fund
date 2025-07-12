@@ -7,7 +7,7 @@ import yfinance as yf
 from sqlalchemy.exc import SQLAlchemyError
 
 from app.backend.database.connection import Base, SessionLocal, engine
-from app.backend.database.models import Price
+from app.backend.database.models import Price, Fundamentals
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -76,6 +76,40 @@ def load_eod(ticker: str, start: str, end: str, retries: int) -> None:
         logger.error("Database error: %s", e)
     finally:
         session.close()
+
+
+@cli.command("load-fundamentals")
+@click.option("--ticker", required=True, help="Ticker symbol")
+def load_fundamentals(ticker: str) -> None:
+    """Load fundamental metrics using yfinance."""
+
+    Base.metadata.create_all(bind=engine)
+
+    try:
+        info = yf.Ticker(ticker).info
+    except Exception as e:  # noqa: BLE001
+        logger.error("Error fetching fundamentals: %s", e)
+        return
+
+    session = SessionLocal()
+    try:
+        fundamentals = Fundamentals(
+            ticker=ticker,
+            fiscal_date=datetime.now().date(),
+            roe=info.get("returnOnEquity"),
+            pe=info.get("trailingPE"),
+            peg=info.get("pegRatio"),
+            moat_pct=info.get("profitMargins"),
+        )
+        session.merge(fundamentals)
+        session.commit()
+        logger.info("Inserted fundamentals for %s", ticker)
+    except SQLAlchemyError as e:
+        session.rollback()
+        logger.error("Database error: %s", e)
+    finally:
+        session.close()
+
 
 
 if __name__ == "__main__":

@@ -116,3 +116,21 @@ class Price(Base):
     volume = Column(Integer)
 
     __table_args__ = (UniqueConstraint("ticker", "date", name="uix_ticker_date"),)
+
+
+class Fundamentals(Base):
+    """Table storing fundamental metrics for each ticker and fiscal date."""
+
+    __tablename__ = "fundamentals"
+
+    id = Column(Integer, primary_key=True)
+    ticker = Column(String(20), index=True, nullable=False)
+    fiscal_date = Column(Date, nullable=False)
+    roe = Column(Float)
+    pe = Column(Float)
+    peg = Column(Float)
+    moat_pct = Column(Float)
+
+    __table_args__ = (
+        UniqueConstraint("ticker", "fiscal_date", name="uix_ticker_fiscal_date"),
+    )
