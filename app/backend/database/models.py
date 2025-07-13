@@ -15,7 +15,6 @@ from sqlalchemy import (
 
 from sqlalchemy.sql import func
 from .connection import Base
-from ..db import Base
 
 from pgvector.sqlalchemy import Vector
 
