@@ -322,13 +322,14 @@ export const api = {
   /**
    * Scan for trading opportunities based on a strategy
    */
-  async scan(data: any): Promise<any> {
-    const response = await fetch(`${API_BASE_URL}/scan`, {
+  async scan({ strategy_id, patterns = [] }: { strategy_id: string; patterns?: string[] }): Promise<any> {
+    const params = new URLSearchParams({ strategy_id });
+    for (const pat of patterns) {
+      params.append('patterns', pat);
+    }
+
+    const response = await fetch(`${API_BASE_URL}/scan?${params.toString()}`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
     });
     if (!response.ok) {
       throw new Error('Failed to run scan');

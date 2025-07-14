@@ -1,4 +1,4 @@
-import { Layout } from './components/layout';
+import { Layout } from './components/Layout';
 import { Toaster } from './components/ui/sonner';
 import { StrategyBuilder } from './components/StrategyBuilder';
 

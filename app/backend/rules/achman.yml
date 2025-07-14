@@ -1,0 +1,9 @@
+id: ackman
+description: Bill Ackman activist strategy
+filters:
+  - field: pe_ratio
+    op: '<'
+    value: 30
+  - field: earnings_growth
+    op: '>'
+    value: 0.1

@@ -1,0 +1,9 @@
+id: lynch
+description: Peter Lynch GARP strategy
+filters:
+  - field: peg_ratio
+    op: '<'
+    value: 1.5
+  - field: earnings_growth
+    op: '>'
+    value: 0.15

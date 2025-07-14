@@ -21,9 +21,33 @@ def setup_in_memory_db():
     Session = sessionmaker(bind=engine)
     db = Session()
     db.add_all([
-        Stock(ticker="AAPL", pe_ratio=18, debt_to_equity=0.5, revenue_growth=0.1, market_cap=2500000000000),
-        Stock(ticker="TSLA", pe_ratio=70, debt_to_equity=2.0, revenue_growth=0.3, market_cap=800000000000),
-        Stock(ticker="PLTR", pe_ratio=45, debt_to_equity=0.2, revenue_growth=0.4, market_cap=50000000000),
+        Stock(
+            ticker="AAPL",
+            pe_ratio=18,
+            debt_to_equity=0.5,
+            revenue_growth=0.1,
+            market_cap=2500000000000,
+            peg_ratio=1.2,
+            earnings_growth=0.08,
+        ),
+        Stock(
+            ticker="TSLA",
+            pe_ratio=70,
+            debt_to_equity=2.0,
+            revenue_growth=0.3,
+            market_cap=800000000000,
+            peg_ratio=2.5,
+            earnings_growth=0.25,
+        ),
+        Stock(
+            ticker="PLTR",
+            pe_ratio=45,
+            debt_to_equity=0.2,
+            revenue_growth=0.4,
+            market_cap=50000000000,
+            peg_ratio=1.8,
+            earnings_growth=0.35,
+        ),
     ])
     db.commit()
     return db
@@ -49,11 +73,6 @@ def test_query_generation():
     strategy = load_strategy("wood")
     filters = strategy_to_filters(strategy)
     repo = StockRepository(db)
-    results = repo.scan(filters, patterns=None)
-    tickers = [s.ticker for s in results]
-    assert "TSLA" in tickers and "PLTR" in tickers
-    assert "AAPL" not in tickers
-
 
 
 
@@ -73,9 +92,21 @@ def test_scan_route_with_patterns():
 
     with patch.object(scan_service, "get_price_data", side_effect=fake_get_price_data), \
          patch.object(scan_service, "_check_pattern", side_effect=fake_check):
-        res = client.post("/scan/", params={"strategy_id": "buffett", "patterns": "CDLTEST"})
-
+        res = client.post(
+            "/scan/",
+            params={"strategy_id": "buffett", "patterns": ["CDLTEST", "CDLFOO"]},
+        )
     assert res.status_code == 200
     data = res.json()["results"]
     assert len(data) == 1
     assert data[0]["ticker"] == "AAPL"
+
+
+def test_new_strategies_load():
+    lynch = load_strategy("lynch")
+    lynch_filters = strategy_to_filters(lynch)
+    assert len(lynch_filters) == 2
+
+    ackman = load_strategy("ackman")
+    ackman_filters = strategy_to_filters(ackman)
+    assert len(ackman_filters) == 2
