@@ -1,3 +1,5 @@
+// right-sidebar.tsx - Modern Block.inc inspired design
+
 import { ComponentGroup, getComponentGroups } from '@/data/sidebar-components';
 import { useComponentGroups } from '@/hooks/use-component-groups';
 import { useResizable } from '@/hooks/use-resizable';
@@ -23,8 +25,8 @@ export function RightSidebar({
   // Use our custom hooks
   const { width, isDragging, elementRef, startResize } = useResizable({
     defaultWidth: 280,
-    minWidth: 200,
-    maxWidth: 500,
+    minWidth: 240,
+    maxWidth: 480,
     side: 'right',
   });
   
@@ -67,15 +69,21 @@ export function RightSidebar({
     <div 
       ref={elementRef}
       className={cn(
-        "h-full bg-panel flex flex-col relative pt-5 border-l border-ramp-grey-700 dark:border-ramp-grey-800",
-        isCollapsed ? "shadow-lg" : "",
-        isDragging ? "select-none border-l-0" : ""
+        "h-full bg-card/95 backdrop-blur-sm flex flex-col relative",
+        "border-l border-border/50 shadow-xl",
+        isCollapsed ? "shadow-2xl" : "",
+        isDragging ? "select-none" : "",
+        "panel-transition"
       )}
       style={{ 
-        width: `${width}px`
+        width: `${width}px`,
       }}
     >
-      <ComponentActions onToggleCollapse={onToggleCollapse} />
+      {/* Modern header section */}
+      <div className="p-4 border-b border-border/50 bg-background/50">
+        <h2 className="text-sm font-semibold text-foreground mb-3">Components</h2>
+        <ComponentActions onToggleCollapse={onToggleCollapse} />
+      </div>
       
       <ComponentList
         componentGroups={componentGroups}
@@ -88,13 +96,15 @@ export function RightSidebar({
         onAccordionChange={handleAccordionChange}
       />
       
-      {/* Resize handle - on the left side for right sidebar */}
+      {/* Modern resize handle */}
       {!isDragging && (
         <div 
-          className="absolute top-0 left-0 h-full w-1 cursor-ew-resize transition-all duration-150 z-10"
+          className="absolute top-0 left-0 h-full w-1 cursor-ew-resize 
+                     transition-all duration-150 z-10 hover:w-1.5 
+                     hover:bg-primary/30 active:bg-primary/50"
           onMouseDown={startResize}
         />
       )}
     </div>
   );
-} 
+}

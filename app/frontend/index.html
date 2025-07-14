@@ -5,11 +5,89 @@
   <meta charset="UTF-8" />
   <link rel="icon" href="/favicon.ico" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#2563eb" />
+  <meta name="description" content="AI Hedge Fund - Modern algorithmic trading platform" />
+  
+  <!-- Modern fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+  
   <title>AI Hedge Fund</title>
+  
+  <style>
+    /* Loading screen styles */
+    #loading-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: #fafafa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.3s ease-out;
+    }
+    
+    .dark #loading-screen {
+      background: #0a0a0a;
+    }
+    
+    .loader {
+      width: 48px;
+      height: 48px;
+      border: 3px solid transparent;
+      border-radius: 50%;
+      border-top-color: #2563eb;
+      animation: spin 1s ease-in-out infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    /* Prevent FOUC */
+    body {
+      opacity: 0;
+      transition: opacity 0.3s ease-in;
+    }
+    
+    body.loaded {
+      opacity: 1;
+    }
+  </style>
 </head>
 
 <body>
+  <!-- Loading screen -->
+  <div id="loading-screen">
+    <div class="loader"></div>
+  </div>
+  
   <div id="root"></div>
+  
+  <script>
+    // Theme detection
+    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+    }
+    
+    // Hide loading screen when app loads
+    window.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => {
+        document.getElementById('loading-screen').style.opacity = '0';
+        document.body.classList.add('loaded');
+        setTimeout(() => {
+          document.getElementById('loading-screen').style.display = 'none';
+        }, 300);
+      }, 100);
+    });
+  </script>
+  
   <script type="module" src="/src/main.tsx"></script>
 </body>
 

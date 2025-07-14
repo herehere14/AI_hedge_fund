@@ -1,3 +1,5 @@
+// left-sidebar.tsx - Modern Block.inc inspired design
+
 import { useFlowManagementTabs } from '@/hooks/use-flow-management-tabs';
 import { useResizable } from '@/hooks/use-resizable';
 import { cn } from '@/lib/utils';
@@ -23,8 +25,8 @@ export function LeftSidebar({
   // Use our custom hooks
   const { width, isDragging, elementRef, startResize } = useResizable({
     defaultWidth: 280,
-    minWidth: 200,
-    maxWidth: 500,
+    minWidth: 240,
+    maxWidth: 480,
     side: 'left',
   });
 
@@ -58,19 +60,25 @@ export function LeftSidebar({
     <div 
       ref={elementRef}
       className={cn(
-        "h-full bg-panel flex flex-col relative pt-5 border-r border-ramp-grey-700 dark:border-ramp-grey-800",
-        isCollapsed ? "shadow-lg" : "",
-        isDragging ? "select-none border-r-0" : ""
+        "h-full bg-card/95 backdrop-blur-sm flex flex-col relative",
+        "border-r border-border/50 shadow-xl",
+        isCollapsed ? "shadow-2xl" : "",
+        isDragging ? "select-none" : "",
+        "panel-transition"
       )}
       style={{ 
         width: `${width}px`
       }}
     >
-      <FlowActions
-        onSave={handleSaveCurrentFlow}
-        onCreate={handleCreateNewFlow}
-        onToggleCollapse={onToggleCollapse}
-      />
+      {/* Modern header section */}
+      <div className="p-4 border-b border-border/50 bg-background/50">
+        <h2 className="text-sm font-semibold text-foreground mb-3">Flows</h2>
+        <FlowActions
+          onSave={handleSaveCurrentFlow}
+          onCreate={handleCreateNewFlow}
+          onToggleCollapse={onToggleCollapse}
+        />
+      </div>
       
       <FlowList
         flows={flows}
@@ -87,10 +95,12 @@ export function LeftSidebar({
         onRefresh={handleRefresh}
       />
       
-      {/* Resize handle - on the right side for left sidebar */}
+      {/* Modern resize handle */}
       {!isDragging && (
         <div 
-          className="absolute top-0 right-0 h-full w-1 cursor-ew-resize transition-all duration-150 z-10"
+          className="absolute top-0 right-0 h-full w-1 cursor-ew-resize 
+                     transition-all duration-150 z-10 hover:w-1.5 
+                     hover:bg-primary/30 active:bg-primary/50"
           onMouseDown={startResize}
         />
       )}
@@ -102,4 +112,4 @@ export function LeftSidebar({
       />
     </div>
   );
-} 
+}

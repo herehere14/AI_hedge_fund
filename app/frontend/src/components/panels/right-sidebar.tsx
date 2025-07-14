@@ -1,3 +1,5 @@
+//right-sidebar.tsx
+
 import { ComponentGroup, getComponentGroups } from '@/data/sidebar-components';
 import { useComponentGroups } from '@/hooks/use-component-groups';
 import { useResizable } from '@/hooks/use-resizable';

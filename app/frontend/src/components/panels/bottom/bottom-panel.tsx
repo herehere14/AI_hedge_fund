@@ -1,3 +1,5 @@
+//bottom-panel.tsx
+
 import { useResizable } from '@/hooks/use-resizable';
 import { cn } from '@/lib/utils';
 import { AlertCircle, Bug, FileText, Terminal, X } from 'lucide-react';

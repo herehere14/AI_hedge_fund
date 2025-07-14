@@ -1,3 +1,5 @@
+// Layout.tsx - Modern Block.inc inspired design
+
 import { BottomPanel } from '@/components/panels/bottom/bottom-panel';
 import { LeftSidebar } from '@/components/panels/left/left-sidebar';
 import { RightSidebar } from '@/components/panels/right/right-sidebar';
@@ -86,29 +88,9 @@ function LayoutContent({ children }: { children: ReactNode }) {
     };
   };
 
-  // Calculate main content positioning accounting for tab bar height
-  const getMainContentStyle = () => {
-    const tabBarHeight = 40; // Approximate tab bar height
-    let top = tabBarHeight;
-    let bottom = 0;
-    
-    if (!isBottomCollapsed) {
-      bottom = bottomPanelHeight;
-    }
-    
-    return {
-      top: `${top}px`,
-      bottom: `${bottom}px`,
-      left: '0',
-      right: '0',
-      width: 'auto',
-      height: 'auto',
-    };
-  };
-
   return (
     <div className="flex h-screen w-screen overflow-hidden relative bg-background">
-      {/* VSCode-style Top Bar */}
+      {/* Modern VSCode-style Top Bar */}
       <TopBar
         isLeftCollapsed={isLeftCollapsed}
         isRightCollapsed={isRightCollapsed}
@@ -119,30 +101,30 @@ function LayoutContent({ children }: { children: ReactNode }) {
         onSettingsClick={handleSettingsClick}
       />
 
-      {/* Tab Bar - positioned absolutely like bottom panel */}
+      {/* Modern Tab Bar with glass effect */}
       <div 
-        className="absolute top-0 z-10 transition-all duration-200"
+        className="absolute top-0 z-20 panel-transition glass-panel"
         style={getSidebarBasedStyle()}
       >
         <TabBar />
       </div>
 
-      {/* Main content area */}
+      {/* Main content area with modern styling */}
       <main 
-        className="absolute inset-0 overflow-hidden" 
+        className="absolute inset-0 overflow-hidden bg-background panel-transition" 
         style={{
           left: !isLeftCollapsed ? `${leftSidebarWidth}px` : '0px',
           right: !isRightCollapsed ? `${rightSidebarWidth}px` : '0px',
-          top: '40px', // Tab bar height
+          top: '48px', // Slightly larger tab bar for modern look
           bottom: !isBottomCollapsed ? `${bottomPanelHeight}px` : '0px',
         }}
       >
         <TabContent className="h-full w-full" />
       </main>
 
-      {/* Floating left sidebar */}
+      {/* Modern floating left sidebar with elevation */}
       <div className={cn(
-        "absolute top-0 left-0 z-30 h-full transition-transform",
+        "absolute top-0 left-0 z-30 h-full panel-transition",
         isLeftCollapsed && "transform -translate-x-full opacity-0"
       )}>
         <LeftSidebar
@@ -154,9 +136,9 @@ function LayoutContent({ children }: { children: ReactNode }) {
         />
       </div>
 
-      {/* Floating right sidebar */}
+      {/* Modern floating right sidebar with elevation */}
       <div className={cn(
-        "absolute top-0 right-0 z-30 h-full transition-transform",
+        "absolute top-0 right-0 z-30 h-full panel-transition",
         isRightCollapsed && "transform translate-x-full opacity-0"
       )}>
         <RightSidebar
@@ -168,10 +150,10 @@ function LayoutContent({ children }: { children: ReactNode }) {
         />
       </div>
 
-      {/* Bottom panel */}
+      {/* Modern bottom panel with glass effect */}
       <div 
         className={cn(
-          "absolute bottom-0 z-20 transition-transform",
+          "absolute bottom-0 z-20 panel-transition",
           isBottomCollapsed && "transform translate-y-full opacity-0"
         )}
         style={getSidebarBasedStyle()}
