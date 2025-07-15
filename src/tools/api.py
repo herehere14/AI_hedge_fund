@@ -24,6 +24,31 @@ from src.data.models import (
 # Global cache instance
 _cache = get_cache()
 
+# Cache for known valid tickers loaded from ``valid_tickers.csv``
+_VALID_TICKERS: set[str] | None = None
+
+
+def _load_valid_tickers() -> set[str]:
+    """Load the set of valid tickers from the bundled text file."""
+    global _VALID_TICKERS
+    if _VALID_TICKERS is not None:
+        return _VALID_TICKERS
+
+    tickers_file = Path(__file__).with_name("valid_tickers.csv")
+    if tickers_file.exists():
+        with open(tickers_file, "r") as fh:
+            _VALID_TICKERS = {line.strip().upper() for line in fh if line.strip()}
+    else:
+        _VALID_TICKERS = set()
+    return _VALID_TICKERS
+
+
+def verify_ticker(ticker: str) -> None:
+    """Raise ``ValueError`` if ``ticker`` is not recognised."""
+    valid_tickers = _load_valid_tickers()
+    if ticker.upper() not in valid_tickers:
+        raise ValueError(f"Ticker '{ticker}' is not recognised")
+
 
 def _make_api_request(url: str, headers: dict, method: str = "GET", json_data: dict = None, max_retries: int = 3) -> requests.Response:
     """
@@ -62,6 +87,8 @@ def _make_api_request(url: str, headers: dict, method: str = "GET", json_data: d
 def get_prices(ticker: str, start_date: str, end_date: str) -> list[Price]:
     """Fetch price data from cache or API."""
     # Create a cache key that includes all parameters to ensure exact matches
+    verify_ticker(ticker)
+
     cache_key = f"{ticker}_{start_date}_{end_date}"
     
     # Check cache first - simple exact match
@@ -97,6 +124,9 @@ def get_financial_metrics(
     limit: int = 10,
 ) -> list[FinancialMetrics]:
     """Fetch financial metrics from cache or API."""
+
+    verify_ticker(ticker)
+
     # Create a cache key that includes all parameters to ensure exact matches
     cache_key = f"{ticker}_{period}_{end_date}_{limit}"
     
@@ -134,6 +164,9 @@ def search_line_items(
     limit: int = 10,
 ) -> list[LineItem]:
     """Fetch line items from API."""
+
+    verify_ticker(ticker)
+
     # If not in cache or insufficient data, fetch from API
     headers = {}
     if api_key := os.environ.get("FINANCIAL_DATASETS_API_KEY"):
@@ -168,6 +201,8 @@ def get_insider_trades(
     limit: int = 1000,
 ) -> list[InsiderTrade]:
     """Fetch insider trades from cache or API."""
+    verify_ticker(ticker)
+
     # Create a cache key that includes all parameters to ensure exact matches
     cache_key = f"{ticker}_{start_date or 'none'}_{end_date}_{limit}"
     
@@ -228,6 +263,8 @@ def get_company_news(
     limit: int = 1000,
 ) -> list[CompanyNews]:
     """Fetch company news from cache or API."""
+    verify_ticker(ticker)
+
     # Create a cache key that includes all parameters to ensure exact matches
     cache_key = f"{ticker}_{start_date or 'none'}_{end_date}_{limit}"
     
@@ -294,6 +331,8 @@ def get_market_cap(
     end_date: str,
 ) -> float | None:
     """Fetch market cap from the API."""
+    verify_ticker(ticker)
+
     # Check if end_date is today
     if end_date == datetime.datetime.now().strftime("%Y-%m-%d"):
         # Get the market cap from company facts API
