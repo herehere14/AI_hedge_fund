@@ -6,7 +6,8 @@ from langgraph.graph import END, StateGraph
 from src.agents.portfolio_manager import portfolio_management_agent
 from src.agents.risk_manager import risk_management_agent
 from src.main import start
-from src.utils.analysts import ANALYST_CONFIG
+from src.utils.analysts import ANALYST_CONFIG, ANALYST_ORDER, CORE_ANALYST_KEYS
+
 from src.graph.state import AgentState
 
 
@@ -18,6 +19,10 @@ def create_graph(selected_agents: list[str]) -> StateGraph:
 
     # Filter out any agents that are not in analyst.py
     selected_agents = [agent for agent in selected_agents if agent in ANALYST_CONFIG]
+
+    selected_set = set(selected_agents) | set(CORE_ANALYST_KEYS)
+    selected_agents = [key for _, key in ANALYST_ORDER if key in selected_set]
+
 
     # Get analyst nodes from the configuration
     analyst_nodes = {key: (f"{key}_agent", config["agent_func"]) for key, config in ANALYST_CONFIG.items()}

@@ -125,6 +125,13 @@ ANALYST_CONFIG = {
     },
 }
 
+CORE_ANALYST_KEYS = [
+    "technical_analyst",
+    "fundamentals_analyst",
+    "sentiment_analyst",
+]
+
+
 # Derive ANALYST_ORDER from ANALYST_CONFIG for backwards compatibility
 ANALYST_ORDER = [(config["display_name"], key) for key, config in sorted(ANALYST_CONFIG.items(), key=lambda x: x[1]["order"])]
 
